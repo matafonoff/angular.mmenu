@@ -139,5 +139,7 @@ MIT
    [options]: <http://mmenu.frebsite.nl/documentation/options/>   
    [parameters]: <http://mmenu.frebsite.nl/documentation/options/configuration.html>
    [$scope]: <https://docs.angularjs.org/guide/scope>
+   [angular.mmenu.js]: <https://raw.githubusercontent.com/matafonoff/angular.mmenu/master/dist/angular.mmenu.js>
+   [angular.mmenu.min.js]: <https://raw.githubusercontent.com/matafonoff/angular.mmenu/master/dist/angular.mmenu.min.js>
 
 
