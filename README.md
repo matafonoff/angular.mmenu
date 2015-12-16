@@ -96,7 +96,7 @@ interface IMenuItem {
  
 ##### <mmenu /> parameters
  - **mmenu-id** - _[Mandatory]_ identifier of mmenu element
- - **mmenu-items** - _[Mandatory]_ name of property in current _$scope_ that contains array of menu items
+ - **mmenu-items** - _[Mandatory]_ name of property in current [$scope] that contains array of menu items
  - **mmenu-options** - name of property in current [$scope] that contains mmenu creation [options]
  - **mmenu-params** - name of property in current [$scope] that contains mmenu creation [parameters]
  - **mmenu-invalidate** - name of property in current [$scope] that will contain mmenu invalidation callback. This property will be set by _angular.mmenu_ at initialization stage. After that you can call this callback when you need your menu to be completely updated.
