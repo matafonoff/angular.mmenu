@@ -7,7 +7,7 @@ Usage:
   - download [angular.mmenu.js] or [angular.mmenu.min.js] 
   - add link to the script file into your html file
   - add _angular-mmenu_ module to your application 
-  - add <mmenu /> tag into your html
+  - add **mmenu** tag into your html
   - magic!
   
 Dependencies:
