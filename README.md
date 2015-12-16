@@ -7,7 +7,7 @@ Usage:
   - download [angular.mmenu.js] or [angular.mmenu.min.js] 
   - add link to the script file into your html file
   - add _angular-mmenu_ module to your application 
-  - add **mmenu** tag into your html
+  - add `<mmenu />` tag into your html
   - magic!
   
 Dependencies:
@@ -89,12 +89,12 @@ interface IMenuItem {
     class?: string;
 }
 ```
- - **href** - link to be used by menu item. If not specified or contains empty string ('') <span /> will be generated instead of <a />.
+ - **href** - link to be used by menu item. If not specified or contains empty string ('') `<span />` will be generated instead of `<a />`.
  - **text** - _[Mandatory]_ text to be displayed by menu item.
- - **class** - class to be added to <li /> items, that represents current menu item
+ - **class** - class to be added to `<li />` items, that represents current menu item
  - **items** - array of subitems of current menu item
  
-##### <mmenu /> parameters
+##### `<mmenu />` tag parameters
  - **mmenu-id** - _[Mandatory]_ identifier of mmenu element
  - **mmenu-items** - _[Mandatory]_ name of property in current [$scope] that contains array of menu items
  - **mmenu-options** - name of property in current [$scope] that contains mmenu creation [options]
@@ -124,7 +124,7 @@ Contact me via e-mail: matafonoff@gmail.com
 
 ## Todos
 
- - Call $scope methods instead of 
+ - Call $scope methods instead of opening  _hrefs_
  - Add Tests
  - Add watching and recreating specifed menu panels instead of entire menu recreation
  - Add ajax-based sub-menu creation
