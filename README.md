@@ -19,7 +19,7 @@ Dependencies:
 > NB! There're no strong version dependencies, but this code was tested just on these versions of 3-d part libraries
 
 ## Version
-0.1.0
+0.1.1
 
 ## Code example
 
@@ -50,9 +50,41 @@ index.html:
 js/app.js:
 ```js
 var app = angular.module('myApp', ['angular-mmenu']);
-app.controller('myController', function ($scope) {
+app.controller('myController', function ($scope, $timeout) {
+	var textHelper = {
+        _text : '',
+        _handlerId: 0,
+        _handlers: {},
+
+        getText: function() { return this._text; }
+
+        setText: function(newValue){
+            var old = this._text;
+            this._text = newValue;
+
+            for (var prop in this._handlers) {
+                this._handlers[prop](newValue, old);
+            }
+        }
+
+        onTextChanged: function(callback) {
+            var myId = ++this._handlerId;
+            this._handlers[myId] = callback;
+
+            return myId;
+        }
+
+        detachHandler: function(handler) {
+            delete this._handlers[handler] ;
+        }
+    };
+	
+	textHelper.setText('Dynamic text');
+	
     $scope.mainMenuItems = [
         { href: '/', text: 'Main' },
+		{ href: '#', text: textHelper },
+		{ href: function() { alert('hello!'); }, text: 'Call JS' },
         {
             text: 'Available Parameters', items: [
                 {
@@ -73,6 +105,10 @@ app.controller('myController', function ($scope) {
             ]
         }
     ];
+	
+	$timeout.setInterval(function() {
+		textHelper.setText('Text updated!');
+	}, 5000);
 });
 ```
 
@@ -82,17 +118,34 @@ app.controller('myController', function ($scope) {
 
 ```ts
 interface IMenuItem {
-    href?: string;          
-    text: string;
+    href?: string | Function;          
+    text: string | MMenu.IMenuItemText;
     items?: IMenuItem[];
 
     class?: string;
 }
 ```
- - **href** - link to be used by menu item. If not specified or contains empty string ('') <span /> will be generated instead of <a />.
- - **text** - _[Mandatory]_ text to be displayed by menu item.
+ - **href** - link to be used by menu item. If not specified or contains empty string ('') <span /> will be generated instead of <a />. Could be a function.
+ - **text** - _[Mandatory]_ text to be displayed by menu item. Could be an object implementing IMenuItemText.
  - **class** - class to be added to <li /> items, that represents current menu item
  - **items** - array of subitems of current menu item
+ 
+#### IMenuItemText
+
+```ts
+interface IMenuItemText {
+	getText(): string;
+	setText(newValue: string): void;
+
+    onTextChanged(callback: IMenuItemTextChangedCallback): number;
+
+    detachHandler(handler: number): void;
+}
+```
+ - **getText** - this function returns text to be shown by menu item
+ - **setText** - this function is used to set text of menu item
+ - **onTextChanged** - register callback that is called when text of menu item changes. Returns identifier to be used for unregistering callback.
+ - **detachHandler** - unregister text change callback.
  
 ##### <mmenu /> parameters
  - **mmenu-id** - _[Mandatory]_ identifier of mmenu element

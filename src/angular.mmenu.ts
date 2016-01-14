@@ -1,4 +1,4 @@
-interface IAngularMMenuDirectiveAttributes extends ng.IAttributes {
+﻿interface IAngularMMenuDirectiveAttributes extends ng.IAttributes {
     mmenuId: string;
     mmenuItems: string;
     mmenuOptions: string;
@@ -9,11 +9,24 @@ interface IAngularMMenuDirectiveAttributes extends ng.IAttributes {
 
 module MMenu {
     export interface IMenuItem {
-        href?: string;
-        text: string;
+        href?: string | Function;
+        text: string | IMenuItemText;
         items?: IMenuItem[];
 
-        class?: string;
+        $class?: string;
+    }
+
+    export interface IMenuItemText {
+        getText(): string;
+        setText(newValue: string): void;
+
+        onTextChanged(callback: IMenuItemTextChangedCallback): number;
+
+        detachHandler(handler: number): void;
+    }
+
+    export interface IMenuItemTextChangedCallback {
+        (newText?: string, oldText?: string): void;
     }
 }
 
@@ -40,17 +53,50 @@ angular.module('angular-mmenu', [])
             else {
                 var href = $('<a />');
 
-                if (menuItem.href === '#' || menuItem.href === '') {
+                if (typeof menuItem.href === "function") {
+                    href.attr('href', 'javascript:void(0);')
+                        .click(e => {
+                            e.preventDefault();
+                            var proc: Function = <Function>menuItem.href;
+                            proc();
+                        });
+                }
+                else if (menuItem.href === '#' || menuItem.href === '') {
                     href.attr('href', 'javascript:void(0);');
                 }
                 else {
-                    href.attr('href', menuItem.href);
+                    href.attr('href', <string>menuItem.href);
                 }
 
                 contentCtrl = href;
             }
 
-            contentCtrl.text(menuItem.text);
+            if (angular.isString(menuItem.text)) {
+                contentCtrl.text(<string>menuItem.text);
+            } else {
+                // must be IMenuItemText
+                var obj = <MMenu.IMenuItemText>menuItem.text;
+                contentCtrl.html(obj.getText());
+
+                var listener = obj.onTextChanged((newValue) => {
+                    contentCtrl.html(newValue);
+                });
+
+                contentCtrl.data('mmenu-dynamic-text', obj)
+                    .data('mmenu-dynamic-text-listener', listener);
+
+                contentCtrl.on("remove", () => {
+                    var handler: MMenu.IMenuItemText = contentCtrl.data('mmenu-dynamic-text');
+                    if (handler === null || handler === undefined) {
+                        return null;
+                    }
+
+                    var currListener: number = contentCtrl.data('mmenu-dynamic-text-listener');
+
+                    handler.detachHandler(currListener);
+                });
+            }
+
             ctrl.append(contentCtrl);
 
             if (menuItem.items !== null && menuItem.items !== undefined &&
@@ -63,6 +109,7 @@ angular.module('angular-mmenu', [])
 
                 ctrl.append(root);
             }
+
         };
 
         var renderMenuItem = (rootControl: JQuery, menuItem: MMenu.IMenuItem) => {
@@ -71,8 +118,8 @@ angular.module('angular-mmenu', [])
             if (menuItem !== null && menuItem !== undefined) {
                 fillMenuItemControl(menuItemControl, menuItem);
 
-                if (menuItem.class !== null && menuItem.class !== undefined) {
-                    menuItemControl.addClass(menuItem.class);
+                if (menuItem.$class !== null && menuItem.$class !== undefined) {
+                    menuItemControl.addClass(menuItem.$class);
                 }
             }
 
@@ -130,13 +177,15 @@ angular.module('angular-mmenu', [])
                 var opts = getValue(scope, attrs.mmenuOptions);
                 var params = getValue(scope, attrs.mmenuParams);
 
+                console.log('mmenu', id, opts, params);
+
                 newMenu.attr(angularMmenuIdAttr, id);
 
                 $(document).ready(() => {
                     newMenu.mmenu(opts, params);
                 });
             }
-            else if (existingMmenu._init != null && existingMmenu._init!==undefined){
+            else if (existingMmenu._init != null && existingMmenu._init !== undefined) {
                 existingMmenu._init();
             }
             else if (existingMmenu.init != null && existingMmenu.init !== undefined) {
