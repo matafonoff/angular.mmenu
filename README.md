@@ -125,14 +125,7 @@ interface IMenuItem {
     class?: string;
 }
 ```
-<<<<<<< HEAD
- - **href** - link to be used by menu item. If not specified or contains empty string ('') `<span />` will be generated instead of `<a />`.
- - **text** - _[Mandatory]_ text to be displayed by menu item.
- - **class** - class to be added to `<li />` items, that represents current menu item
- - **items** - array of subitems of current menu item
- 
-##### `<mmenu />` tag parameters
-=======
+
  - **href** - link to be used by menu item. If not specified or contains empty string ('') <span /> will be generated instead of <a />. Could be a function.
  - **text** - _[Mandatory]_ text to be displayed by menu item. Could be an object implementing IMenuItemText.
  - **class** - class to be added to <li /> items, that represents current menu item
