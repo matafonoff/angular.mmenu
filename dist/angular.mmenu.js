@@ -17,7 +17,15 @@ angular.module('angular-mmenu', [])
         }
         else {
             var href = $('<a />');
-            if (menuItem.href === '#' || menuItem.href === '') {
+            if (typeof menuItem.href === "function") {
+                href.attr('href', 'javascript:void(0);')
+                    .click(function (e) {
+                    e.preventDefault();
+                    var proc = menuItem.href;
+                    proc();
+                });
+            }
+            else if (menuItem.href === '#' || menuItem.href === '') {
                 href.attr('href', 'javascript:void(0);');
             }
             else {
@@ -25,7 +33,26 @@ angular.module('angular-mmenu', [])
             }
             contentCtrl = href;
         }
-        contentCtrl.text(menuItem.text);
+        if (angular.isString(menuItem.text)) {
+            contentCtrl.text(menuItem.text);
+        }
+        else {
+            var obj = menuItem.text;
+            contentCtrl.html(obj.getText());
+            var listener = obj.onTextChanged(function (newValue) {
+                contentCtrl.html(newValue);
+            });
+            contentCtrl.data('mmenu-dynamic-text', obj)
+                .data('mmenu-dynamic-text-listener', listener);
+            contentCtrl.on("remove", function () {
+                var handler = contentCtrl.data('mmenu-dynamic-text');
+                if (handler === null || handler === undefined) {
+                    return null;
+                }
+                var currListener = contentCtrl.data('mmenu-dynamic-text-listener');
+                handler.detachHandler(currListener);
+            });
+        }
         ctrl.append(contentCtrl);
         if (menuItem.items !== null && menuItem.items !== undefined &&
             angular.isArray(menuItem.items) && menuItem.items.length > 0) {
@@ -40,8 +67,8 @@ angular.module('angular-mmenu', [])
         var menuItemControl = $('<li/>');
         if (menuItem !== null && menuItem !== undefined) {
             fillMenuItemControl(menuItemControl, menuItem);
-            if (menuItem.class !== null && menuItem.class !== undefined) {
-                menuItemControl.addClass(menuItem.class);
+            if (menuItem.$class !== null && menuItem.$class !== undefined) {
+                menuItemControl.addClass(menuItem.$class);
             }
         }
         rootControl.append(menuItemControl);
@@ -82,6 +109,7 @@ angular.module('angular-mmenu', [])
             oldMenuElement.replaceWith(newMenuElement);
             var opts = getValue(scope, attrs.mmenuOptions);
             var params = getValue(scope, attrs.mmenuParams);
+            console.log('mmenu', id, opts, params);
             newMenu.attr(angularMmenuIdAttr, id);
             $(document).ready(function () {
                 newMenu.mmenu(opts, params);
@@ -124,3 +152,4 @@ angular.module('angular-mmenu', [])
         }
     };
 });
+//# sourceMappingURL=angular.mmenu.js.map
