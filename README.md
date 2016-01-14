@@ -149,7 +149,6 @@ interface IMenuItemText {
  - **detachHandler** - unregister text change callback.
  
 ##### <mmenu /> parameters
->>>>>>> develop
  - **mmenu-id** - _[Mandatory]_ identifier of mmenu element
  - **mmenu-items** - _[Mandatory]_ name of property in current [$scope] that contains array of menu items
  - **mmenu-options** - name of property in current [$scope] that contains mmenu creation [options]
