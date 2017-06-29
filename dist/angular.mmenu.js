@@ -34,7 +34,7 @@ angular.module('angular-mmenu', [])
             contentCtrl = href;
         }
         if (angular.isString(menuItem.text)) {
-            contentCtrl.text(menuItem.text);
+            contentCtrl.html(menuItem.text);
         }
         else {
             var obj = menuItem.text;
